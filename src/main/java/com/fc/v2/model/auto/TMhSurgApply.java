@@ -30,9 +30,15 @@ public class TMhSurgApply implements Serializable {
     /** 单据唯一编号 */
     @ApiModelProperty(value = "单据唯一编号")
     private String applyNo;
-    /** 关联对象编号 */
-    @ApiModelProperty(value = "关联对象编号")
+    /** 关联对象编号（患者号，换人则整单作废重做） */
+    @ApiModelProperty(value = "关联对象编号（患者号，换人则整单作废重做）")
     private String subjectNo;
+    /** 床号（仅转床则护士方重新核对，余签保留） */
+    @ApiModelProperty(value = "床号（仅转床则护士方重新核对，余签保留）")
+    private String bedNo;
+    /** 患者/床位对象版本，换人转床递增 */
+    @ApiModelProperty(value = "患者/床位对象版本，换人转床递增")
+    private Integer subjectVer;
     /** 归属科室 */
     @ApiModelProperty(value = "归属科室")
     private String deptName;
@@ -42,21 +48,30 @@ public class TMhSurgApply implements Serializable {
     /** 术式名称 */
     @ApiModelProperty(value = "术式名称")
     private String procedureName;
-    /** 部位标识 L/R/N */
-    @ApiModelProperty(value = "部位标识 L/R/N")
+    /** 核查表部位标识 L/R/N（以现场核查+影像为准） */
+    @ApiModelProperty(value = "核查表部位标识 L/R/N（以现场核查+影像为准）")
     private String siteFlag;
-    /** 部位取自哪份 0单据 1档案 2有异议 */
-    @ApiModelProperty(value = "部位取自哪份 0单据 1档案 2有异议")
+    /** 病历侧部位标识 L/R/N */
+    @ApiModelProperty(value = "病历侧部位标识 L/R/N")
+    private String siteFlagRecord;
+    /** 部位状态 0一致 1以单据为准已更正病历 2有异议未放行 */
+    @ApiModelProperty(value = "部位状态 0一致 1以单据为准已更正病历 2有异议未放行")
     private String siteSource;
-    /** 是否紧急 0否 1是 */
-    @ApiModelProperty(value = "是否紧急 0否 1是")
+    /** 病历部位更正流水号（抢救口头裁定时留空，补核前必须补登） */
+    @ApiModelProperty(value = "病历部位更正流水号")
+    private String recordFixNo;
+    /** 是否抢救 0否 1是 */
+    @ApiModelProperty(value = "是否抢救 0否 1是")
     private Integer urgentFlag;
-    /** 单据情形 0待核 1核对中 2已通过 3已占位 4已作废 5已归档 */
-    @ApiModelProperty(value = "单据情形 0待核 1核对中 2已通过 3已占位 4已作废 5已归档")
+    /** 单据情形 0待核 1核对中 2已放行 3已占位 4已作废 5已归档（放行与占位同事务） */
+    @ApiModelProperty(value = "单据情形 0待核 1核对中 2已放行 3已占位 4已作废 5已归档")
     private Integer status;
     /** 版本号，作废重做时递增 */
     @ApiModelProperty(value = "版本号，作废重做时递增")
     private Integer versionNo;
+    /** 重做自哪张单号（作废重做链） */
+    @ApiModelProperty(value = "重做自哪张单号")
+    private String redoOf;
     /** 是否待事后补核 0否 1是 */
     @ApiModelProperty(value = "是否待事后补核 0否 1是")
     private Integer recheckFlag;
@@ -66,9 +81,12 @@ public class TMhSurgApply implements Serializable {
     /** 放行时刻 */
     @ApiModelProperty(value = "放行时刻")
     private Date releaseAt;
-    /** 放行后占用的资源位 */
-    @ApiModelProperty(value = "放行后占用的资源位")
+    /** 放行后占用的手术间 */
+    @ApiModelProperty(value = "放行后占用的手术间")
     private String occupyResource;
+    /** 排程时段键 手术间+时段，与上游排程同口径 */
+    @ApiModelProperty(value = "排程时段键 手术间+时段，与上游排程同口径")
+    private String slotKey;
     /** 占用时刻 */
     @ApiModelProperty(value = "占用时刻")
     private Date occupyAt;
@@ -94,6 +112,15 @@ public class TMhSurgApply implements Serializable {
     /**  */
     @ApiModelProperty(value = "del_flag")
     private Integer delFlag;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getApplyNo() {
         return applyNo;
     }
@@ -108,6 +135,22 @@ public class TMhSurgApply implements Serializable {
 
     public void setSubjectNo(String subjectNo) {
         this.subjectNo = subjectNo;
+    }
+
+    public String getBedNo() {
+        return bedNo;
+    }
+
+    public void setBedNo(String bedNo) {
+        this.bedNo = bedNo;
+    }
+
+    public Integer getSubjectVer() {
+        return subjectVer;
+    }
+
+    public void setSubjectVer(Integer subjectVer) {
+        this.subjectVer = subjectVer;
     }
 
     public String getDeptName() {
@@ -142,12 +185,28 @@ public class TMhSurgApply implements Serializable {
         this.siteFlag = siteFlag;
     }
 
+    public String getSiteFlagRecord() {
+        return siteFlagRecord;
+    }
+
+    public void setSiteFlagRecord(String siteFlagRecord) {
+        this.siteFlagRecord = siteFlagRecord;
+    }
+
     public String getSiteSource() {
         return siteSource;
     }
 
     public void setSiteSource(String siteSource) {
         this.siteSource = siteSource;
+    }
+
+    public String getRecordFixNo() {
+        return recordFixNo;
+    }
+
+    public void setRecordFixNo(String recordFixNo) {
+        this.recordFixNo = recordFixNo;
     }
 
     public Integer getUrgentFlag() {
@@ -172,6 +231,14 @@ public class TMhSurgApply implements Serializable {
 
     public void setVersionNo(Integer versionNo) {
         this.versionNo = versionNo;
+    }
+
+    public String getRedoOf() {
+        return redoOf;
+    }
+
+    public void setRedoOf(String redoOf) {
+        this.redoOf = redoOf;
     }
 
     public Integer getRecheckFlag() {
@@ -204,6 +271,14 @@ public class TMhSurgApply implements Serializable {
 
     public void setOccupyResource(String occupyResource) {
         this.occupyResource = occupyResource;
+    }
+
+    public String getSlotKey() {
+        return slotKey;
+    }
+
+    public void setSlotKey(String slotKey) {
+        this.slotKey = slotKey;
     }
 
     public Date getOccupyAt() {

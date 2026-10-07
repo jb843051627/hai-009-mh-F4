@@ -48,9 +48,15 @@ public class TMhSurgSign implements Serializable {
     /** 核对时刻 */
     @ApiModelProperty(value = "核对时刻")
     private Date signedAt;
-    /** 提交批次号（并行应同为 0） */
-    @ApiModelProperty(value = "提交批次号（并行应同为 0）")
+    /** 提交批次号（并行应同为 0，无先后） */
+    @ApiModelProperty(value = "提交批次号（并行应同为 0，无先后）")
     private Integer signSeq;
+    /** 签署时的核查单版本，旧版签署随旧单留痕不改写 */
+    @ApiModelProperty(value = "签署时的核查单版本，旧版签署随旧单留痕不改写")
+    private Integer versionNo;
+    /** 同一版本内的核对轮次，转床后护士重核递增、旧轮留痕 */
+    @ApiModelProperty(value = "同一版本内的核对轮次，转床后护士重核递增、旧轮留痕")
+    private Integer roundNo;
     /**  */
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "create_by")
@@ -70,6 +76,15 @@ public class TMhSurgSign implements Serializable {
     /**  */
     @ApiModelProperty(value = "del_flag")
     private Integer delFlag;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getApplyNo() {
         return applyNo;
     }
@@ -132,6 +147,22 @@ public class TMhSurgSign implements Serializable {
 
     public void setSignSeq(Integer signSeq) {
         this.signSeq = signSeq;
+    }
+
+    public Integer getVersionNo() {
+        return versionNo;
+    }
+
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
+    }
+
+    public Integer getRoundNo() {
+        return roundNo;
+    }
+
+    public void setRoundNo(Integer roundNo) {
+        this.roundNo = roundNo;
     }
 
     public String getCreateBy() {
