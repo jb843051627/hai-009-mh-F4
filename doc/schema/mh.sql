@@ -251,13 +251,14 @@ CREATE TABLE IF NOT EXISTS `t_mh_surg_sign` (
   `signed_by` varchar(64) DEFAULT NULL COMMENT '核对人',
   `signed_at` datetime DEFAULT NULL COMMENT '核对时刻',
   `sign_seq` int DEFAULT 0 COMMENT '提交批次号（并行应同为 0）',
+  `version_no` int NOT NULL DEFAULT 1 COMMENT '所属单据版本号，作废重做时随主表递增，旧版条目保留原版本号',
   `create_by` varchar(64) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_by` varchar(64) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `del_flag` int DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_apply_role_item` (`apply_no`,`role_code`,`item_key`),
+  UNIQUE KEY `uk_apply_role_item_ver` (`apply_no`,`role_code`,`item_key`,`version_no`),
   KEY `idx_apply` (`apply_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='并行核对条目表';
 

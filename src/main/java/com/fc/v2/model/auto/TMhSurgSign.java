@@ -51,6 +51,9 @@ public class TMhSurgSign implements Serializable {
     /** 提交批次号（并行应同为 0） */
     @ApiModelProperty(value = "提交批次号（并行应同为 0）")
     private Integer signSeq;
+    /** 所属单据版本号，作废重做时随主表递增，旧版条目保留原版本号 */
+    @ApiModelProperty(value = "所属单据版本号")
+    private Integer versionNo;
     /**  */
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "create_by")
@@ -132,6 +135,14 @@ public class TMhSurgSign implements Serializable {
 
     public void setSignSeq(Integer signSeq) {
         this.signSeq = signSeq;
+    }
+
+    public Integer getVersionNo() {
+        return versionNo;
+    }
+
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
     public String getCreateBy() {
